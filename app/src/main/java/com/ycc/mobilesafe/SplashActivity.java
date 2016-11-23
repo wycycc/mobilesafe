@@ -31,6 +31,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+/**
+ * 系统启动动画页面
+ */
 public class SplashActivity extends Activity {
 
     private static final String TAG = "SplashActivity";
