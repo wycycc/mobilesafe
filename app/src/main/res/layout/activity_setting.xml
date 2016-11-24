@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ycc="http://schemas.android.com/apk/res/com.ycc.mobilesafe"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -15,6 +16,9 @@
         android:textSize="22sp"/>
 
     <com.ycc.mobilesafe.ui.SettingitemView
+        ycc:title="设置自动更新"
+        ycc:desc_on="设置自动更新已经开启"
+        ycc:desc_off="设置自动更新已经关闭"
         android:id="@+id/siv_update"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
