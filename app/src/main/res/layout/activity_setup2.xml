@@ -20,6 +20,7 @@
         style="@style/text_content_style"
         />
     <com.ycc.mobilesafe.ui.SettingitemView
+        android:id="@+id/siv_setup2_sim"
         ycc:title="点击绑定sim卡"
         ycc:desc_on="sim卡没有绑定"
         ycc:desc_off="sim卡已绑定"

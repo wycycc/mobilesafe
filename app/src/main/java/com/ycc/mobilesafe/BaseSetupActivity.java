@@ -1,7 +1,7 @@
 package com.ycc.mobilesafe;
 
 import android.app.Activity;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -12,10 +12,12 @@ public abstract class BaseSetupActivity extends Activity {
 
     //定义一个手势识别器
     private GestureDetector detector;
+    protected SharedPreferences sp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sp = getSharedPreferences("config",MODE_PRIVATE);
         //实例化这个手势识别器
         detector = new GestureDetector(this,new GestureDetector.SimpleOnGestureListener(){
             /**
@@ -63,10 +65,7 @@ public abstract class BaseSetupActivity extends Activity {
      * @param view
      */
     public void pre(View view){
-        Intent intent = new Intent(this,Setup1Activity.class);
-        startActivity(intent);
-        finish();
-        overridePendingTransition(R.anim.tran_pre_in,R.anim.tran_pre_out);
+        showPre();
     }
 
     /**

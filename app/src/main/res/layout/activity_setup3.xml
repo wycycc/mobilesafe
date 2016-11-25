@@ -20,12 +20,14 @@
         style="@style/text_content_style"
         />
     <EditText
+        android:id="@+id/et_setup3_phone"
         android:hint="请输入电话号码"
         android:inputType="phone"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
     <Button
+        android:onClick="selectContact"
         android:background="@drawable/button_bg"
        android:text="选择联系人"
         android:layout_height="wrap_content"
