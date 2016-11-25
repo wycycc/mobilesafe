@@ -46,6 +46,7 @@ public class SettingitemView extends RelativeLayout{
         desc_on = attrs.getAttributeValue("http://schemas.android.com/apk/res/com.ycc.mobilesafe","desc_on");
         desc_off = attrs.getAttributeValue("http://schemas.android.com/apk/res/com.ycc.mobilesafe","desc_off");
         tv_title.setText(title);
+        setDesc(desc_off);
 
     }
 
