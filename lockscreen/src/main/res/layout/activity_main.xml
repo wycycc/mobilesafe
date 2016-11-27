@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.ycc.lockscreen.MainActivity">
+
+    <Button
+        android:onClick="openAdmin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="开户管理员权限" />
+
+    <Button
+        android:onClick="lockscreen"
+        android:layout_centerInParent="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="一键锁屏" />
+
+    <Button
+        android:onClick="uninstall"
+        android:layout_alignParentBottom="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="卸载软件" />
+</RelativeLayout>
