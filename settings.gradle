@@ -1,1 +1,1 @@
-include ':app', ':gpsdemo','readcontact'
+include ':app', ':gpsdemo', ':lockscreen', 'readcontact'
