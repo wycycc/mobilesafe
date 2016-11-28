@@ -25,7 +25,7 @@
                 android:resource="@xml/device_admin_sample"/>
 
             <intent-filter>
-                <action android:name="android.app.action.DEVOICE_AMDIN_ENABLED"/>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED"/>
             </intent-filter>
 
             </receiver>
