@@ -47,9 +47,14 @@ public class HomeActivity extends Activity {
         list_home.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+                //TODO 主页面分发
                 switch (position){
                     case 0://进入手机防盗页面
                         ShowLostFindDialog();
+                        break;
+                    case 7://进入高级工具
+                        Intent intents = new Intent(HomeActivity.this,AtoolsActivity.class);
+                        startActivity(intents);
                         break;
                     case 8://进入设置中心
                         Intent intent = new Intent(HomeActivity.this,SettingActivity.class);
