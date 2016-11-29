@@ -20,10 +20,24 @@
         ycc:desc_on="设置自动更新已经开启"
         ycc:desc_off="设置自动更新已经关闭"
         android:id="@+id/siv_update"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content">
-
-
     </com.ycc.mobilesafe.ui.SettingitemView>
+
+    <com.ycc.mobilesafe.ui.SettingitemView
+        android:id="@+id/siv_show_addr"
+        ycc:title="号码归属地显示"
+        ycc:desc_on="号码归属地显示已经开启"
+        ycc:desc_off="号码归属地显示已经关闭"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+    </com.ycc.mobilesafe.ui.SettingitemView>
+
+    <com.ycc.mobilesafe.ui.SettingclickView
+        android:id="@+id/scv_changebg"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+    </com.ycc.mobilesafe.ui.SettingclickView>
+
 
 </LinearLayout>

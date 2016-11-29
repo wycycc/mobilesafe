@@ -14,6 +14,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
 
     <application
         android:allowBackup="true"
@@ -26,6 +27,7 @@
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -37,7 +39,7 @@
         <activity android:name=".Setup3Activity" />
         <activity android:name=".Setup4Activity" />
         <activity android:name=".AtoolsActivity" />
-        <activity android:name=".NumberAddressQueryActivity"/>
+        <activity android:name=".NumberAddressQueryActivity" />
 
         <receiver android:name=".receiver.BootCompleteReceiver">
             <intent-filter>
@@ -46,17 +48,31 @@
         </receiver>
 
         <activity android:name=".SelectContactActivity" />
-
+        <!--接收短信-->
         <receiver android:name=".receiver.SmsReceiver">
             <intent-filter android:priority="1000">
                 <action android:name="android.provider.Telephoney.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
+        <!--<receiver
+            android:name=".receiver.OutCallReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
+            </intent-filter>
+        </receiver>-->
 
         <service
             android:name=".service.GPSService"
             android:enabled="true"
             android:exported="true" />
+        <service
+            android:name=".service.AddressService"
+            android:enabled="true"
+            android:exported="true" />
+
+
     </application>
 
 </manifest>

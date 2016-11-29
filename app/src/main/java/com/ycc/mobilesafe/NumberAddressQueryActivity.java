@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.Interpolator;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -85,13 +84,13 @@ public class NumberAddressQueryActivity extends Activity {
         if(TextUtils.isEmpty(phone)){
             Toast.makeText(this,"号码为空",Toast.LENGTH_LONG).show();
             Animation shake = AnimationUtils.loadAnimation(this,R.anim.shake);
-            shake.setInterpolator(new Interpolator() {
+            /**shake.setInterpolator(new Interpolator() {
                 @Override
                 public float getInterpolation(float v) {
                     //函数的运算
                     return 0;
                 }
-            });
+            });*/
             et_phone.startAnimation(shake);
             //当电话号码为空时，就振动手机提醒用户
             //vibrator.vibrate(2000);
