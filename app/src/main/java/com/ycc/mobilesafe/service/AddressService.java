@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.telephony.PhoneStateListener;
@@ -87,8 +88,11 @@ public class AddressService extends Service {
     private void myToast(String address) {
         view = View.inflate(this, R.layout.address_show,null);
         TextView textView = (TextView) view.findViewById(R.id.tv_address);
+        //"半透明","活力橙","卫士蓝","金属灰","苹果绿"
+        int[] ids = {R.drawable.call_locate_white,R.drawable.call_locate_orange,R.drawable.call_locate_blue,R.drawable.call_locate_gray,R.drawable.call_locate_green};
         textView.setText(address);
-        textView.setBackgroundResource(R.drawable.call_locate_gray);
+        SharedPreferences sp = getSharedPreferences("config",MODE_PRIVATE);
+        view.setBackgroundResource(ids[sp.getInt("which",0)]);
 
         /**view = new TextView(getApplicationContext());
         view.setText(address);

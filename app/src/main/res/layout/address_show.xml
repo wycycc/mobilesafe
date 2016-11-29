@@ -10,6 +10,7 @@
         android:layout_height="wrap_content" />
 
     <TextView
+        android:textColor="#000000"
         android:id="@+id/tv_address"
         android:textSize="22sp"
         android:text="号码归属地显示"
