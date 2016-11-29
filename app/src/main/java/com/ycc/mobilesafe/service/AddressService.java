@@ -11,6 +11,8 @@ import android.os.IBinder;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -33,6 +35,8 @@ public class AddressService extends Service {
     private TelephonyManager tm;
     private MyPhoneStateListener listener;
     private OutCallReceiver receiver;
+    private SharedPreferences sp;
+
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
@@ -81,6 +85,8 @@ public class AddressService extends Service {
         }
     }
 
+    private WindowManager.LayoutParams params;
+
     /**
      * 自定义土司
      * @param address
@@ -88,10 +94,66 @@ public class AddressService extends Service {
     private void myToast(String address) {
         view = View.inflate(this, R.layout.address_show,null);
         TextView textView = (TextView) view.findViewById(R.id.tv_address);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+        //给view对象设置一个触摸监听器
+        view.setOnTouchListener(new View.OnTouchListener() {
+            int startX,startY;//定义手指的初始化位置
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                switch (event.getAction()){
+                    case MotionEvent.ACTION_DOWN://手指按下屏幕
+                        startX = (int) event.getRawX();
+                        startY = (int)event.getRawY();
+                        Log.i(TAG,"开始位置:"+startX+","+startY);
+                        break;
+                    case MotionEvent.ACTION_MOVE://手指在屏幕上移动
+                        int newX = (int)event.getRawX();
+                        int newY = (int)event.getRawY();
+                        Log.i(TAG,"新的位置:"+newX+","+newY);
+                        int dx = newX - startX;
+                        int dy = newY - startY;
+                        Log.i(TAG,"手指的偏移量:"+dx+","+dy);
+                        Log.i(TAG,"更新imageview在窗体的位置，偏移量："+dx+","+dy);
+                        params.x += dx;
+                        params.y += dy;
+                        //考虑边界问题
+                        if(params.x<0){
+                            params.x = 0;
+                        }
+                        if(params.y<0){
+                            params.y = 0;
+                        }
+                        if(params.x>(wm.getDefaultDisplay().getWidth()-view.getWidth())){
+                            params.x = (wm.getDefaultDisplay().getWidth()-view.getWidth());
+                        }
+                        if(params.y>(wm.getDefaultDisplay().getHeight()-view.getHeight())){
+                            params.y = (wm.getDefaultDisplay().getHeight()-view.getHeight());
+                        }
+                        wm.updateViewLayout(view,params);
+                        //重新初始化手指的开始位置和结束位置
+                        startX = (int)event.getRawX();
+                        startY = (int)event.getRawY();
+                        break;
+                    case MotionEvent.ACTION_UP://手指离开屏幕一瞬间
+                        //记录控件距离屏幕左上解的坐标
+                        SharedPreferences.Editor editor = sp.edit();
+                        editor.putInt("lastx",params.x);
+                        editor.putInt("lasty",params.y);
+                        editor.commit();
+                        break;
+                }
+                return true;//事件处理完毕 了，不让父控件父布局触摸事件了
+            }
+        });
         //"半透明","活力橙","卫士蓝","金属灰","苹果绿"
         int[] ids = {R.drawable.call_locate_white,R.drawable.call_locate_orange,R.drawable.call_locate_blue,R.drawable.call_locate_gray,R.drawable.call_locate_green};
         textView.setText(address);
-        SharedPreferences sp = getSharedPreferences("config",MODE_PRIVATE);
+        sp = getSharedPreferences("config",MODE_PRIVATE);
         view.setBackgroundResource(ids[sp.getInt("which",0)]);
 
         /**view = new TextView(getApplicationContext());
@@ -100,16 +162,21 @@ public class AddressService extends Service {
         view.setTextColor(Color.RED);*/
 
         //窗体的参数就设置好了
-        WindowManager.LayoutParams params = new WindowManager.LayoutParams();
-
+       params = new WindowManager.LayoutParams();
         params.height = WindowManager.LayoutParams.WRAP_CONTENT;
         params.width = WindowManager.LayoutParams.WRAP_CONTENT;
+        //与窗体左上解对齐
+        params.gravity = Gravity.TOP;
+        //指定窗体距离左边100，上边100个像素
+        params.x = sp.getInt("lastx",0);
+        params.y = sp.getInt("lasty",0);
 
         params.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                //| WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
                 | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
         params.format = PixelFormat.TRANSLUCENT;
-        params.type = WindowManager.LayoutParams.TYPE_TOAST;
+        //android系统里具有电话优先级的一种窗体类型,需添加权限
+        params.type = WindowManager.LayoutParams.TYPE_PRIORITY_PHONE;
         wm.addView(view, params);
     }
 
