@@ -48,16 +48,21 @@ public class HomeActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 //TODO 主页面分发
+                Intent intent;
                 switch (position){
                     case 0://进入手机防盗页面
                         ShowLostFindDialog();
                         break;
+                    case 1://加载黑名单拦截界面
+                        intent = new Intent(HomeActivity.this,CallSmsSafeActivity.class);
+                        startActivity(intent);
+                        break;
                     case 7://进入高级工具
-                        Intent intents = new Intent(HomeActivity.this,AtoolsActivity.class);
-                        startActivity(intents);
+                        intent = new Intent(HomeActivity.this,AtoolsActivity.class);
+                        startActivity(intent);
                         break;
                     case 8://进入设置中心
-                        Intent intent = new Intent(HomeActivity.this,SettingActivity.class);
+                        intent = new Intent(HomeActivity.this,SettingActivity.class);
                         startActivity(intent);
                         break;
                 }
