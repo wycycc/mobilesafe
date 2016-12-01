@@ -58,15 +58,20 @@ public class CallSmsSafeActivity extends Activity {
                 //把一个布局文件转化成view对象
                 //Log.i(TAG,"position:"+position+"convertView:"+convertView);
                 view = View.inflate(getApplicationContext(),R.layout.list_item_callsms,null);
+                //2.减少子孩子查询的次数  //内存中对象的地址
+                //Log.i(TAG,"position:"+position+"view:"+view);
+                holder = new ViewHolder();
+                holder.tv_number = (TextView) view.findViewById(R.id.tv_black_number);
+                holder.tv_mode = (TextView) view.findViewById(R.id.tv_black_mode);
+                //当孩子生出来的时候找到他们的引用，存放在记事本里，放在父亲的口袋里
+                view.setTag(holder);
             }else {
                 view = convertView;
+                holder = (ViewHolder) view.getTag();
             }
 
             //2.减少子孩子查询的次数  //内存中对象的地址
             //Log.i(TAG,"position:"+position+"view:"+view);
-            holder = new ViewHolder();
-            holder.tv_number = (TextView) view.findViewById(R.id.tv_black_number);
-            holder.tv_mode = (TextView) view.findViewById(R.id.tv_black_mode);
             holder.tv_number.setText(infos.get(position).getNumber());
             String mode = infos.get(position).getMode();
             if("1".equals(mode)){
