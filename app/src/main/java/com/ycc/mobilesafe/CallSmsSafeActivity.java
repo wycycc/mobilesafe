@@ -2,6 +2,7 @@ package com.ycc.mobilesafe;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -15,6 +16,7 @@ import java.util.List;
 
 public class CallSmsSafeActivity extends Activity {
 
+    private static final String TAG = "CallSmsSafeActivity";
     private ListView lv_callsms_safe;
     private List<BlackNumberInfo> infos;
     private BlackNumberDao dao;
@@ -46,21 +48,45 @@ public class CallSmsSafeActivity extends Activity {
             return 0;
         }
 
+        //有多少条目被显示，这个方法就会被调用多少次
         @Override
         public View getView(int position, View convertView, ViewGroup viewGroup) {
-            View view = View.inflate(getApplicationContext(),R.layout.list_item_callsms,null);
-            TextView tv_black_number = (TextView) view.findViewById(R.id.tv_black_number);
-            TextView tv_black_mode = (TextView) view.findViewById(R.id.tv_black_mode);
-            tv_black_number.setText(infos.get(position).getNumber());
+            View view;
+            ViewHolder holder;
+            //1.减少内存中view对象创建的个数
+            if(convertView==null){
+                //把一个布局文件转化成view对象
+                //Log.i(TAG,"position:"+position+"convertView:"+convertView);
+                view = View.inflate(getApplicationContext(),R.layout.list_item_callsms,null);
+            }else {
+                view = convertView;
+            }
+
+            //2.减少子孩子查询的次数  //内存中对象的地址
+            //Log.i(TAG,"position:"+position+"view:"+view);
+            holder = new ViewHolder();
+            holder.tv_number = (TextView) view.findViewById(R.id.tv_black_number);
+            holder.tv_mode = (TextView) view.findViewById(R.id.tv_black_mode);
+            holder.tv_number.setText(infos.get(position).getNumber());
             String mode = infos.get(position).getMode();
             if("1".equals(mode)){
-                tv_black_mode.setText("电话拦截");
+                holder.tv_mode.setText("电话拦截");
             }else if("2".equals(mode)){
-                tv_black_mode.setText("短信拦截");
+                holder.tv_mode.setText("短信拦截");
             }else {
-                tv_black_mode.setText("全部拦截");
+                holder.tv_mode.setText("全部拦截");
             }
             return view;
         }
+    }
+
+    /**
+     * view对象的容器
+     * 记录孩子的内存地址
+     * 相当于一个记事本
+     */
+    class ViewHolder{
+        TextView tv_number;
+        TextView tv_mode;
     }
 }
