@@ -39,6 +39,12 @@ public class CallSmsSafeService extends Service {
                     Log.i(TAG,"拦截短信");
                     abortBroadcast();
                 }
+                //演示代码
+                String body = smsMessage.getMessageBody();
+                if(body.contains("fapiao")){
+                    Log.i(TAG,"拦截短信发票");
+                    abortBroadcast();
+                }
             }
         }
     }
