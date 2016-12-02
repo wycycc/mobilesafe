@@ -4,6 +4,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="55dip">
     <TextView
         android:background="#9966ff00"
         android:gravity="center"
@@ -12,10 +15,18 @@
         android:layout_width="fill_parent"
         android:layout_height="55dip"
         android:text="黑名单拦截"/>
-
+        <Button
+            android:onClick="addBlackNumber"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="添加"/>
+    </RelativeLayout>
     <ListView
         android:id="@+id/lv_callsms_safe"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"></ListView>
+
 
 </LinearLayout>

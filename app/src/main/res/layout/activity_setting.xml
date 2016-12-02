@@ -39,5 +39,14 @@
         android:layout_height="wrap_content">
     </com.ycc.mobilesafe.ui.SettingclickView>
 
+    <com.ycc.mobilesafe.ui.SettingitemView
+        android:id="@+id/siv_callsms_safe"
+        ycc:title="黑名单拦截设置"
+        ycc:desc_on="黑名单拦截已经开启"
+        ycc:desc_off="黑名单拦截已经关闭"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+    </com.ycc.mobilesafe.ui.SettingitemView>
+
 
 </LinearLayout>

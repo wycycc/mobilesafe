@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.ycc.mobilesafe.service.AddressService;
+import com.ycc.mobilesafe.service.CallSmsSafeService;
 import com.ycc.mobilesafe.ui.SettingclickView;
 import com.ycc.mobilesafe.ui.SettingitemView;
 import com.ycc.mobilesafe.utils.ServiceUtils;
@@ -25,8 +26,33 @@ public class SettingActivity extends Activity {
     private SettingitemView siv_show_addr;
     private Intent showAddressIntent;
 
+    //黑名单拦截设置
+    private SettingitemView siv_callsms_safe;
+    private Intent callSmsSafeIntent;
+
     //设置归属地显示框背景
     private SettingclickView scv_changebg;
+
+    @Override
+    protected void onResume() {
+        // TODO Auto-generated method stub
+        super.onResume();
+        showAddressIntent = new Intent(this, AddressService.class);
+        boolean isServiceRunning = ServiceUtils.isServiceRunning(
+                SettingActivity.this, "com.ycc.mobilesafe.service.AddressService");
+
+        if(isServiceRunning){
+            //监听来电的服务是开启的
+            siv_show_addr.setChecked(true);
+        }else{
+            siv_show_addr.setChecked(false);
+        }
+
+        boolean iscallSmsServiceRunning = ServiceUtils.isServiceRunning(
+                SettingActivity.this,"com.ycc.mobilesafe.service.CallSmsSafeService");
+        siv_callsms_safe.setChecked(iscallSmsServiceRunning);
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +118,26 @@ public class SettingActivity extends Activity {
                 }
             }
         });
+        //黑名单拦截设置
+        siv_callsms_safe = (SettingitemView) findViewById(R.id.siv_callsms_safe);
+        callSmsSafeIntent = new Intent(this, CallSmsSafeService.class);
+        siv_callsms_safe.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (siv_callsms_safe.isChecked()) {
+                    // 变为非选中状态
+                    siv_callsms_safe.setChecked(false);
+                    stopService(callSmsSafeIntent);
+                } else {
+                    // 选择状态
+                    siv_callsms_safe.setChecked(true);
+                    startService(callSmsSafeIntent);
+                }
+
+            }
+        });
+
         //设置号码归属地的背景
         scv_changebg = (SettingclickView) findViewById(R.id.scv_changebg);
         scv_changebg.setTitle("归属地提示框风格");
@@ -121,5 +167,6 @@ public class SettingActivity extends Activity {
                 builder.show();
             }
         });
+
     }
 }
