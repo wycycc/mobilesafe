@@ -50,7 +50,7 @@ public class BlackNumberDao {
     public String findMode(String number){
         String result = null;
         SQLiteDatabase db = helper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select * from blacknumber where number=?",new String[]{number});
+        Cursor cursor = db.rawQuery("select mode from blacknumber where number=?",new String[]{number});
         if(cursor.moveToNext()){
             result = cursor.getString(0);
         }

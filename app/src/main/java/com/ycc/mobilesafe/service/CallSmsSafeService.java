@@ -6,15 +6,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.IBinder;
+import android.telephony.PhoneStateListener;
 import android.telephony.SmsMessage;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.android.internal.telephony.ITelephony;
 import com.ycc.mobilesafe.db.dao.BlackNumberDao;
+
+import java.lang.reflect.Method;
 
 public class CallSmsSafeService extends Service {
     private static final String TAG = "CallSmsSafeService";
     private InnerSmsReceiver receiver;
     private BlackNumberDao dao;
+    private TelephonyManager tm;
+    private MyListener listener;
+
     public CallSmsSafeService() {
     }
 
@@ -52,6 +60,9 @@ public class CallSmsSafeService extends Service {
     @Override
     public void onCreate() {
         dao = new BlackNumberDao(this);
+        tm = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+        listener = new MyListener();
+        tm.listen(listener, PhoneStateListener.LISTEN_CALL_STATE);
         receiver = new InnerSmsReceiver();
         IntentFilter filter = new IntentFilter("android.provider.Telephoney.SMS_RECEIVED");
         filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
@@ -63,6 +74,37 @@ public class CallSmsSafeService extends Service {
     public void onDestroy() {
         unregisterReceiver(receiver);
         receiver = null;
+        tm.listen(listener,PhoneStateListener.LISTEN_NONE);
         super.onDestroy();
+    }
+
+    private class MyListener extends PhoneStateListener{
+        @Override
+        public void onCallStateChanged(int state, String incomingNumber) {
+            switch (state){
+                case TelephonyManager.CALL_STATE_RINGING://零响模式
+                    String result = dao.findMode(incomingNumber);
+                    if("1".equals(result)||"3".equals(result)){
+                        Log.i(TAG,"挂断电话......");
+                        //1.5版本后，endCall不再应用
+                        endCall();
+                    }
+                    break;
+            }
+            super.onCallStateChanged(state, incomingNumber);
+        }
+    }
+
+    private void endCall() {
+        //IBinder iBinder = ServiceManager.getService(TELEPHONY_SERVICE);
+        try {
+            //加载ServiceManager的字节码
+            Class clazz = CallSmsSafeService.class.getClassLoader().loadClass("android.os.ServiceManager");
+            Method method = clazz.getDeclaredMethod("getService",String.class);
+            IBinder iBinder = (IBinder) method.invoke(null,TELEPHONY_SERVICE);
+            ITelephony.Stub.asInterface(iBinder).endCall();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
