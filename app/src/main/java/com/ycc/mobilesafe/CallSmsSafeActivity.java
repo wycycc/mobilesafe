@@ -7,11 +7,13 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,16 +30,78 @@ public class CallSmsSafeActivity extends Activity {
     private List<BlackNumberInfo> infos;
     private BlackNumberDao dao;
     private CallSmsSafeAdapter adapter;
+    private LinearLayout ll_loading;
+    private int offset = 0;
+    private int maxnumber = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_call_sms_safe);
         lv_callsms_safe = (ListView) findViewById(R.id.lv_callsms_safe);
+        ll_loading = (LinearLayout) findViewById(R.id.ll_loading);
         dao = new BlackNumberDao(this);
-        infos = dao.findAll();
-        adapter = new CallSmsSafeAdapter();
-        lv_callsms_safe.setAdapter(adapter);
+        fillData();
+        //listview注册一个滚动事件的监听器
+        lv_callsms_safe.setOnScrollListener(new AbsListView.OnScrollListener() {
+            //当滚动的状态发生变化时
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                switch (scrollState){
+                    case AbsListView.OnScrollListener.SCROLL_STATE_IDLE://空闲状态
+                        System.out.println("空闲状态");
+                        //判断当前listview滚动的位置
+                        //获取最后个可见条目在集合里的位置
+                        int lastposition = lv_callsms_safe.getLastVisiblePosition();
+                        System.out.println("最后一个条目的位置:"+lastposition);
+                        //集合里有20个item位置从0开始的最后一个的位置是19
+                        if(lastposition == (infos.size()-1)){
+                            System.out.println("列表被移动到最后一个位置，加载更多数据......");
+                            offset += maxnumber;
+                            fillData();
+                        }
+                        break;
+                    case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL://手指触摸滚动
+                        System.out.println("手指触摸滚动");
+                        break;
+                    case AbsListView.OnScrollListener.SCROLL_STATE_FLING://惯性滑行状态
+                        System.out.println("惯性滑行状态");
+                        break;
+                }
+            }
+
+            //滚动的时候调用的方法
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+            }
+        });
+    }
+
+    private void fillData() {
+        ll_loading.setVisibility(View.VISIBLE);
+        new Thread(){
+            @Override
+            public void run() {
+                if(infos==null){
+                    infos = dao.findPart(offset,maxnumber);
+                }else{
+                    infos.addAll(dao.findPart(offset,maxnumber));
+                }
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        ll_loading.setVisibility(View.INVISIBLE);
+                        if(adapter==null) {
+                            adapter = new CallSmsSafeAdapter();
+                            lv_callsms_safe.setAdapter(adapter);
+                        }else{
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
+                });
+            };
+        }.start();
     }
 
     private class CallSmsSafeAdapter extends BaseAdapter{

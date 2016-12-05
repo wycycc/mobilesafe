@@ -99,11 +99,44 @@ public class BlackNumberDao {
      * @return
      */
     public List<BlackNumberInfo> findAll(){
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         List<BlackNumberInfo> result = new ArrayList<BlackNumberInfo>();
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.rawQuery("select number,mode from blacknumber order by _id desc",null);
         while(cursor.moveToNext()){
            BlackNumberInfo info = new BlackNumberInfo();
+            String number = cursor.getString(0);
+            String mode = cursor.getString(1);
+            info.setNumber(number);
+            info.setMode(mode);
+            result.add(info);
+        }
+        cursor.close();
+        db.close();
+        return result;
+    }
+
+    /**
+     * 查询部分黑名单号码是否存在
+     * @param offset 从哪个位置获取数据
+     * @param maxnumber 一次最多获取多少条数据
+     * @return
+     */
+    public List<BlackNumberInfo> findPart(int offset,int maxnumber){
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        List<BlackNumberInfo> result = new ArrayList<BlackNumberInfo>();
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select number,mode from blacknumber order by _id desc limit ? offset ?",new String[]{String.valueOf(maxnumber),String.valueOf(offset)});
+        while(cursor.moveToNext()){
+            BlackNumberInfo info = new BlackNumberInfo();
             String number = cursor.getString(0);
             String mode = cursor.getString(1);
             info.setNumber(number);

@@ -41,7 +41,17 @@ public class AtoolsActivity extends Activity {
            @Override
            public void run() {
                try {
-                   SmsUtils.backupSms(AtoolsActivity.this,pd);
+                   SmsUtils.backupSms(AtoolsActivity.this, new SmsUtils.BackUpCallBack() {
+                       @Override
+                       public void beforeBackup(int max) {
+                           pd.setMax(max);
+                       }
+
+                       @Override
+                       public void onSmsBackup(int progress) {
+                            pd.setProgress(progress);
+                       }
+                   });
                    runOnUiThread(new Runnable() {
                        @Override
                        public void run() {
@@ -68,6 +78,7 @@ public class AtoolsActivity extends Activity {
      * @param vie
      */
     public void smsRestore(View vie){
-
+        SmsUtils.restoreSms(this,true);
+        Toast.makeText(this,"还原成功",Toast.LENGTH_LONG).show();
     }
 }
