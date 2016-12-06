@@ -1,7 +1,6 @@
 package com.ycc.mobilesafe;
 
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StatFs;
@@ -145,11 +144,13 @@ public class AppManagerActivity extends AppCompatActivity {
                 System.out.println(appInfo.getPackname());
                 dismissPopupWindow();
 
-                TextView contentView = new TextView(getApplicationContext());
-                contentView.setText(appInfo.getPackname());
-                contentView.setTextColor(Color.BLACK);
+                View contentView = View.inflate(getApplicationContext(),R.layout.popup_app_item,null);
+                //TextView contentView = new TextView(getApplicationContext());
+                //contentView.setText(appInfo.getPackname());
+                //contentView.setTextColor(Color.BLACK);
+
                 popupWindow = new PopupWindow(contentView,ViewGroup.LayoutParams.WRAP_CONTENT,-2);
-                popupWindow.setBackgroundDrawable(new ColorDrawable(Color.RED));
+                //popupWindow.setBackgroundDrawable(new ColorDrawable(Color.RED));
                 int[] location = new int[2];
                 view.getLocationInWindow(location);
                 popupWindow.showAtLocation(parent, Gravity.LEFT|Gravity.TOP,location[0],location[1]);
