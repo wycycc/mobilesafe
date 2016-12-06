@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ycc.mobilesafe"
+    android:installLocation="preferExternal"
     android:versionCode="1"
     android:versionName="1.0">
 
@@ -55,6 +56,7 @@
         <activity android:name=".AtoolsActivity" />
         <activity android:name=".NumberAddressQueryActivity" />
         <activity android:name=".CallSmsSafeActivity" />
+        <activity android:name=".AppManagerActivity"/>
 
         <receiver android:name=".receiver.BootCompleteReceiver">
             <intent-filter>
@@ -91,7 +93,9 @@
         <service
             android:name=".service.CallSmsSafeService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
+
+
     </application>
 
 </manifest>

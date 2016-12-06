@@ -14,14 +14,14 @@
         android:text="功能列表"
         android:id="@+id/textView" />
 
-    <com.ycc.mobilesafe.ui.FocusedTextView
+   <!-- <com.ycc.mobilesafe.ui.FocusedTextView
         android:focusableInTouchMode="true"
         android:singleLine="true"
         android:ellipsize="marquee"
         android:textSize="18sp"
         android:text="最新的手机卫士，快来下载啊，下载送妹妹，最新的手机卫士，快来下载啊，下载送妹妹"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content" />-->
 
     <GridView
         android:verticalSpacing="10dip"
