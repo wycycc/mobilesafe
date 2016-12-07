@@ -56,7 +56,8 @@
         <activity android:name=".AtoolsActivity" />
         <activity android:name=".NumberAddressQueryActivity" />
         <activity android:name=".CallSmsSafeActivity" />
-        <activity android:name=".AppManagerActivity"/>
+        <activity android:name=".AppManagerActivity" />
+        <activity android:name=".TaskManagerActivity"/>
 
         <receiver android:name=".receiver.BootCompleteReceiver">
             <intent-filter>

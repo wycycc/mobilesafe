@@ -6,6 +6,8 @@ import android.test.ApplicationTestCase;
 import com.ycc.mobilesafe.db.dao.BlackNumberDao;
 import com.ycc.mobilesafe.db.dao.BlackNumberDbOpenHelper;
 import com.ycc.mobilesafe.domain.BlackNumberInfo;
+import com.ycc.mobilesafe.domain.TaskInfo;
+import com.ycc.mobilesafe.engine.TaskInfoProvider;
 
 import java.util.List;
 import java.util.Random;
@@ -16,6 +18,13 @@ import java.util.Random;
 public class ApplicationTest extends ApplicationTestCase<Application> {
     public ApplicationTest() {
         super(Application.class);
+    }
+
+    public void testGetTaskInfos() throws Exception{
+        List<TaskInfo> infos = TaskInfoProvider.getTaskInfos(getContext());
+        for(TaskInfo info:infos){
+            System.out.println("============="+info.toString());
+        }
     }
 
     public void testCreateDb() throws Exception{
