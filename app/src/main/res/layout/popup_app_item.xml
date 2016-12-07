@@ -4,9 +4,10 @@
     android:orientation="horizontal" android:layout_width="wrap_content"
     android:layout_height="wrap_content">
     <LinearLayout
+        android:id="@+id/ll_uninstall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical" >
         <ImageView
             android:src="@drawable/img1"
             android:layout_width="wrap_content"
@@ -19,9 +20,11 @@
     </LinearLayout>
 
     <LinearLayout
+        android:layout_marginLeft="5dip"
+        android:id="@+id/ll_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical" >
         <ImageView
             android:src="@drawable/img2"
             android:layout_width="wrap_content"
@@ -34,9 +37,11 @@
     </LinearLayout>
 
     <LinearLayout
+        android:layout_marginLeft="5dip"
+        android:id="@+id/ll_share"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical" >
         <ImageView
             android:src="@drawable/img3"
             android:layout_width="wrap_content"

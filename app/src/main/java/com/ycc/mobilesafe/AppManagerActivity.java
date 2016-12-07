@@ -1,14 +1,22 @@
 package com.ycc.mobilesafe;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StatFs;
 import android.support.v7.app.AppCompatActivity;
 import android.text.format.Formatter;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.ScaleAnimation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -18,15 +26,18 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.ycc.mobilesafe.domain.AppInfo;
 import com.ycc.mobilesafe.engine.AppInfoProvider;
+import com.ycc.mobilesafe.utils.DensityUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AppManagerActivity extends AppCompatActivity {
+public class AppManagerActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private static final String TAG = "AppManagerActivity";
     private TextView tv_avail_rom;
     private TextView tv_avail_sd;
 
@@ -57,6 +68,15 @@ public class AppManagerActivity extends AppCompatActivity {
      * 弹出悬浮窗体
      */
     private PopupWindow popupWindow;
+
+    private LinearLayout ll_start;//开启
+    private LinearLayout ll_share;//分享
+    private LinearLayout ll_uninstall;//卸载
+
+    /**
+     * 被点击的条目
+     */
+    private  AppInfo appInfo;;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -145,15 +165,36 @@ public class AppManagerActivity extends AppCompatActivity {
                 dismissPopupWindow();
 
                 View contentView = View.inflate(getApplicationContext(),R.layout.popup_app_item,null);
+                ll_start = (LinearLayout) contentView.findViewById(R.id.ll_start);
+                ll_share = (LinearLayout) contentView.findViewById(R.id.ll_share);
+                ll_uninstall = (LinearLayout) contentView.findViewById(R.id.ll_uninstall);
+
+                ll_start.setOnClickListener(AppManagerActivity.this);
+                ll_share.setOnClickListener(AppManagerActivity.this);
+                ll_uninstall.setOnClickListener(AppManagerActivity.this);
+
                 //TextView contentView = new TextView(getApplicationContext());
                 //contentView.setText(appInfo.getPackname());
                 //contentView.setTextColor(Color.BLACK);
 
                 popupWindow = new PopupWindow(contentView,ViewGroup.LayoutParams.WRAP_CONTENT,-2);
-                //popupWindow.setBackgroundDrawable(new ColorDrawable(Color.RED));
+                //动画效果的播放必须要求窗体有背景颜色
+                //透明颜色也是颜色
+                popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 int[] location = new int[2];
                 view.getLocationInWindow(location);
-                popupWindow.showAtLocation(parent, Gravity.LEFT|Gravity.TOP,location[0],location[1]);
+                //在代码里设置的宽高长单位为像素
+                int dip = 60;
+                int px = DensityUtils.dip2px(getApplicationContext(),dip);
+                popupWindow.showAtLocation(parent, Gravity.LEFT|Gravity.TOP,px,location[1]);
+                ScaleAnimation sa = new ScaleAnimation(0.3f,1.0f,0.3f,1.0f, Animation.RELATIVE_TO_SELF,0,Animation.RELATIVE_TO_SELF,0.5f);
+                sa.setDuration(300);
+                AlphaAnimation aa = new AlphaAnimation(0.5f,1.0f);
+                aa.setDuration(300);
+                AnimationSet set = new AnimationSet(false);
+                set.addAnimation(aa);
+                set.addAnimation(sa);
+                contentView.startAnimation(set);
             }
         });
     }
@@ -165,6 +206,7 @@ public class AppManagerActivity extends AppCompatActivity {
             popupWindow = null;
         }
     }
+
 
     private class AppManagerAdapter extends BaseAdapter{
 
@@ -180,7 +222,7 @@ public class AppManagerActivity extends AppCompatActivity {
             /**TextView tv = new TextView(getApplicationContext());
             tv.setText(appInfos.get(position).toString());
             return tv;*/
-            AppInfo appInfo;
+
             if(position==0){//显示的是用户程序有多少个小标签
                 TextView tv = new TextView(getApplicationContext());
                 tv.setTextColor(Color.WHITE);
@@ -269,4 +311,46 @@ public class AppManagerActivity extends AppCompatActivity {
         dismissPopupWindow();
         super.onDestroy();
     }
+
+    /**
+     * 布局对应的点击事件
+     * @param v
+     */
+    @Override
+    public void onClick(View v) {
+        dismissPopupWindow();
+        switch (v.getId()){
+            case R.id.ll_share:
+                Log.i(TAG,"分享:"+appInfo.getName());
+                break;
+            case R.id.ll_start:
+                Log.i(TAG,"启动:"+appInfo.getName());
+                startApplication();
+                break;
+            case R.id.ll_uninstall:
+                Log.i(TAG,"卸载:"+appInfo.getName());
+                break;
+        }
+    }
+
+    /**
+     * 开启应用程序
+     */
+    private void startApplication() {
+        //查询这个应用程序的入口activity,把它开启起来
+        PackageManager pm = getPackageManager();
+        /**Intent intent = new Intent();
+        intent.setAction("android.intent.action.MAIN");
+        intent.addCategory("android.intent.category.LAUNCHER");
+        //查询出来了所有手机上具有启动能力的activity
+        List<ResolveInfo> infos = pm.queryIntentActivities(intent,PackageManager.GET_INTENT_FILTERS);*/
+        Intent intent = pm.getLaunchIntentForPackage(appInfo.getPackname());
+        if(intent!=null){
+            startActivity(intent);
+        }else{
+            Toast.makeText(this,"不能启动当前应用",Toast.LENGTH_LONG).show();
+        }
+
+    }
+
 }
