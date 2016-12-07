@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.StatFs;
@@ -76,7 +77,8 @@ public class AppManagerActivity extends AppCompatActivity implements View.OnClic
     /**
      * 被点击的条目
      */
-    private  AppInfo appInfo;;
+    private  AppInfo appInfo;
+    private AppManagerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -322,15 +324,58 @@ public class AppManagerActivity extends AppCompatActivity implements View.OnClic
         switch (v.getId()){
             case R.id.ll_share:
                 Log.i(TAG,"分享:"+appInfo.getName());
+                shareApplication();
                 break;
             case R.id.ll_start:
                 Log.i(TAG,"启动:"+appInfo.getName());
                 startApplication();
                 break;
             case R.id.ll_uninstall:
-                Log.i(TAG,"卸载:"+appInfo.getName());
+                if (appInfo.isUserApp()) {
+                    Log.i(TAG, "卸载：" + appInfo.getName());
+                    uninstallApplication();
+                }else{
+                    Toast.makeText(this, "系统应用只有获取root权限才可以卸载", 0).show();
+                    //Runtime.getRuntime().exec("");
+                }
                 break;
         }
+    }
+
+    /**
+     * 分享一个应用程序
+     */
+    private void shareApplication() {
+        // Intent { act=android.intent.action.SEND typ=text/plain flg=0x3000000 cmp=com.android.mms/.ui.ComposeMessageActivity (has extras) } from pid 256
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.SEND");
+        intent.addCategory(Intent.CATEGORY_DEFAULT);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, "推荐您使用一款软件,名称叫："+appInfo.getName());
+        startActivity(intent);
+    }
+
+    /**
+     * 卸载应用
+     */
+    private void uninstallApplication() {
+        // <action android:name="android.intent.action.VIEW" />
+        // <action android:name="android.intent.action.DELETE" />
+        // <category android:name="android.intent.category.DEFAULT" />
+        // <data android:scheme="package" />
+        Intent intent = new Intent();
+        intent.setAction("android.intent.action.VIEW");
+        intent.setAction("android.intent.action.DELETE");
+        intent.addCategory("android.intent.category.DEFAULT");
+        intent.setData(Uri.parse("package:" + appInfo.getPackname()));
+        startActivityForResult(intent, 0);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode,int resultCode, Intent data) {
+        // 刷新界面。
+        fillData();
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     /**
@@ -351,6 +396,37 @@ public class AppManagerActivity extends AppCompatActivity implements View.OnClic
             Toast.makeText(this,"不能启动当前应用",Toast.LENGTH_LONG).show();
         }
 
+    }
+
+    private void fillData() {
+        ll_loading.setVisibility(View.VISIBLE);
+        new Thread() {
+            public void run() {
+                appInfos = AppInfoProvider.getAppInfos(AppManagerActivity.this);
+                userAppInfos = new ArrayList<AppInfo>();
+                sysAppInfos = new ArrayList<AppInfo>();
+                for (AppInfo info : appInfos) {
+                    if (info.isUserApp()) {
+                        userAppInfos.add(info);
+                    } else {
+                        sysAppInfos.add(info);
+                    }
+                }
+                // 加载listview的数据适配器
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (adapter == null) {
+                            adapter = new AppManagerAdapter();
+                            lv_app_manager.setAdapter(adapter);
+                        } else {
+                            adapter.notifyDataSetChanged();
+                        }
+                        ll_loading.setVisibility(View.INVISIBLE);
+                    }
+                });
+            };
+        }.start();
     }
 
 }
